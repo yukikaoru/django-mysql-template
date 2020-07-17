@@ -26,9 +26,10 @@ services:
     build: ./web
     image: python:3.8
     restart: always
+    user: "${USERID:?required USERID}:${GROUPID:?required GROUPID}"
     environment:
-      DJANGO_SETTINGS_MODULE: app.settings.local
-    command: python manage.py runserver 0.0.0.0:8000 >> /log/django.log 2>&1
+      DJANGO_SETTINGS_MODULE: app.settings.dev
+    command: sh -c "python manage.py runserver 0.0.0.0:8000 >> /log/django.log 2>&1"
     ports:
       - '58000:8000'
     volumes:
