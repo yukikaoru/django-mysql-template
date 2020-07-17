@@ -1,0 +1,38 @@
+version: '3'
+services:
+  #
+  # mysql
+  #
+  db:
+    build: ./mysql
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: mydb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - '53307:3306'
+    volumes:
+      - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
+      - ./docker/mysql/log:/var/log/mysql
+  #
+  # web
+  #
+  web:
+    build: ./web
+    image: python:3.8
+    restart: always
+    environment:
+      DJANGO_SETTINGS_MODULE: app.settings.local
+    command: python manage.py runserver 0.0.0.0:8000 >> /log/django.log 2>&1
+    ports:
+      - '58000:8000'
+    volumes:
+      - ./web:/code
+      - ./log:/log
+    depends_on:
+        - db
