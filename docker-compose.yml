@@ -1,4 +1,9 @@
 version: '3'
+volumes:
+    mysql-log:
+        driver: local
+    mysql-data:
+        driver: local
 services:
   #
   # mysql
@@ -6,7 +11,7 @@ services:
   db:
     build: ./mysql
     image: mysql:5.7
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_DATABASE: mydb
       MYSQL_ROOT_PASSWORD: root
@@ -16,9 +21,10 @@ services:
     ports:
       - '53307:3306'
     volumes:
-      - ./docker/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - ./docker/mysql/conf.d:/etc/mysql/conf.d
-      - ./docker/mysql/log:/var/log/mysql
+      - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - mysql-log:/var/log/mysql
+      - mysql-data:/var/lib/mysql
   #
   # web
   #
@@ -34,6 +40,6 @@ services:
       - '58000:8000'
     volumes:
       - ./web:/code
-      - ./log:/log
+      - ./web/log:/log
     depends_on:
         - db
