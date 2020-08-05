@@ -29,7 +29,9 @@ services:
   # web
   #
   web:
-    build: ./web
+    build:
+      context: ..
+      dockerfile: python/Dockerfile
     image: python:3.8
     restart: always
     user: "${USERID:?required USERID}:${GROUPID:?required GROUPID}"
@@ -39,7 +41,7 @@ services:
     ports:
       - '58000:8000'
     volumes:
-      - ./web:/code
-      - ./web/log:/log
+      - .:/code
+      - ./log:/log
     depends_on:
         - db
