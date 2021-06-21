@@ -1,2 +1,2 @@
-Django>=2.0,<3.0
-mysqlclient==^3.2
+Django~=3.2
+mysqlclient>=2.0,<3.0
